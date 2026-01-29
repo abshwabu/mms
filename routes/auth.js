@@ -6,15 +6,17 @@ const { User } = require('../models');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-  const { username, password, email } = req.body || {};
+  const { username, password, email, firstName, lastName, phone, role } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'username and password required' });
   const exists = await User.findOne({ where: { username } });
   if (exists) return res.status(409).json({ error: 'username taken' });
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
+  const allowedRoles = ['admin', 'teacher', 'staff', 'student'];
+  const assignedRole = allowedRoles.includes(role) ? role : 'student';
   try {
-    const user = await User.create({ username, email: email || null, passwordHash: hash });
-    const safe = { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt };
+    const user = await User.create({ username, email: email || null, firstName: firstName || null, lastName: lastName || null, phone: phone || null, role: assignedRole, passwordHash: hash });
+    const safe = { id: user.id, username: user.username, email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, role: user.role, createdAt: user.createdAt };
     res.status(201).json(safe);
   } catch (err) {
     res.status(500).json({ error: 'failed to create user' });

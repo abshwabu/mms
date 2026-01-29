@@ -10,11 +10,28 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: true,
       unique: true,
       validate: { isEmail: true },
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    role: {
+      type: DataTypes.ENUM('admin', 'teacher', 'staff', 'student'),
+      allowNull: false,
+      defaultValue: 'student'
     },
     passwordHash: {
       type: DataTypes.STRING,
